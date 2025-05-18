@@ -52,28 +52,53 @@ app.get('/', (req, res) => {
 })
 
 app.post('/signin', (req, res) => {
-    if (req.body.email === database.users[0].email &&
-        req.body.password === database.users[0].password){
-            res.json('success')
+    db.select('email', 'hash').from('login')
+    .where('email', '=', req.body.email)
+    .then(data => {
+        const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
+        if (isValid){
+            return db.select('*').from('users')
+            .where('email', '=', req.body.email)
+            .then(user => {
+                res.json(user[0])
+            })
+            .catch(err => res.status(400).json('unable to get user'))
         } else {
-            res.status(400).json('error logging in')
+            res.status(400).json('wroong credentials')
         }
-    res.json('signin')
-});
+    })
+    .catch(err => res.status(400).json('wrong credentials'))
+})
 
 app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
-    db('users')
-        .returning('*')
-        .insert({
-            email: email,
-            name: name,
-            joined: new Date()
-    })
-        .then(user => {
-            res.json(user[0]);
-    })
-    .catch(err => res.status(400).json('unable to register'))
+    const hash = bcrypt.hashSync(password);
+    db.transaction(trx => {
+        trx.insert({
+            hash: hash,
+            email: email
+        })
+        .into('login')
+        .returning('email')
+        .then(loginEmail => {
+            trx('users')
+                .returning('*')
+                .insert({
+                    email: loginEmail[0].email,
+                    name: name,
+                    joined: new Date()
+                })
+                .then(user => {
+                    res.json(user[0]);
+                })
+                .catch(err => res.status(400).json('unable to register'))
+        })
+        .then(trx.commit)
+        .catch(trx.rollback)
+
+    });
+
+    
 })
 
 app.get('/profile/:id', (req, res) => {
@@ -103,12 +128,3 @@ app.put('/image', (req, res) => {
 app.listen(3000, ()=>{
     console.log('app is running');
 })
-
-/*
-/ -> res = this is working
-/signin -> POST = success/fail
-/register -> POST = user
-/profile/:userId -> GET = user
-/image -> PUT = user
-
-*/
