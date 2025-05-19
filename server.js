@@ -16,7 +16,7 @@ const db = knex({
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 app.use(cors())
 
 app.post('/signin', (req, res) => {
@@ -40,7 +40,7 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const {email, name, password} = req.body;
-    const hash = bcrypt.hash(password);
+    const hash = bcrypt.hashSync(password);
     db.transaction(trx => {
         trx.insert({
             hash: hash,
