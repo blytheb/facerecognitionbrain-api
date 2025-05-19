@@ -15,16 +15,15 @@ const db = knex({
 });
 
 const app = express();
-app.use(bodyParser.json())
+
+app.use(express.json())
 app.use(cors())
-
-
 
 app.post('/signin', (req, res) => {
     db.select('email', 'hash').from('login')
     .where('email', '=', req.body.email)
     .then(data => {
-        const isValid = bcrypt.compare(req.body.password, data[0].hash);
+        const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
         if (isValid){
             return db.select('*').from('users')
             .where('email', '=', req.body.email)
@@ -60,15 +59,12 @@ app.post('/register', (req, res) => {
                 .then(user => {
                     res.json(user[0]);
                 })
-                .catch(err => res.status(400).json('unable to register'))
-        })
+            })
         .then(trx.commit)
         .catch(trx.rollback)
-
-    });
-
-    
-})
+        })
+        .catch(err => res.status(400).json('unable to register'))
+    })
 
 app.get('/profile/:id', (req, res) => {
     const {id} = req.params;
