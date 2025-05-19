@@ -25,6 +25,8 @@
     "bcrypt": "^6.0.0",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^2.2.0",
+    "clarifai": "^2.9.1",
+    "clarifai-nodejs-grpc": "^11.3.4",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "knex": "^3.1.0",
