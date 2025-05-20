@@ -1,5 +1,5 @@
-const PAT = 'a6cc7d0c3b8f4016a1da98681085d7a1';
-const USER_ID = 'eueaof5ayc3r';
+const PAT = process.env.API_CLARIFAI;
+const USER_ID = process.env.API_CLARIFAI_USERNAME;
 const APP_ID = 'face-recognition';
 const MODEL_ID = 'face-detection';
 const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
