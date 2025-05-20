@@ -19,7 +19,10 @@ const image = require('./controllers/image.js');
 //     }
 // });
 
-const db = process.env.DATABASE_URL;
+const db = knex({
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+});
 
 const app = express();
 
