@@ -9,15 +9,17 @@ const signin = require('./controllers/signin.js');
 const profile = require('./controllers/profile.js');
 const image = require('./controllers/image.js');
 
-const db = knex({
-    client: 'pg',
-    connection: {
-        host: '127.0.0.1',
-        user: 'blythe',
-        password: '',
-        database: 'smart-brain'
-    }
-});
+// const db = knex({
+//     client: 'pg',
+//     connection: {
+//         host: '127.0.0.1',
+//         user: 'blythe',
+//         password: '',
+//         database: 'smart-brain'
+//     }
+// });
+
+const db = process.env.DATABASE_URL;
 
 const app = express();
 
